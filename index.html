@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ball Bounce Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #111;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    canvas {
+      background: #222;
+      border: 4px solid #555;
+      border-radius: 12px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background: #0bf;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #09c;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="500" height="400"></canvas>
+  <button onclick="restartGame()">إعادة اللعبة 🔄</button>
+  <audio id="bounceSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 15,
+      dx: 4,
+      dy: 4,
+      color: getRandomColor(),
+    };
+
+    const bounceSound = document.getElementById("bounceSound");
+
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = ball.color;
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    function updateGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBall();
+
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+        ball.dx = -ball.dx;
+        ball.color = getRandomColor();
+        bounceSound.play();
+      }
+
+      if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+        ball.dy = -ball.dy;
+        ball.color = getRandomColor();
+        bounceSound.play();
+      }
+
+      requestAnimationFrame(updateGame);
+    }
+
+    function restartGame() {
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.dx = 4;
+      ball.dy = 4;
+      ball.color = getRandomColor();
+    }
+
+    updateGame();
+  </script>
+</body>
+</html>
